@@ -1,0 +1,16 @@
+# Source material — not part of the website
+header image/
+my portfolio pdf/
+reference/
+colors/
+
+# Local tooling
+.claude/
+
+# Large files (GitHub rejects files over 100 MB)
+*.pdf
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
