@@ -156,8 +156,8 @@ const CONFIG = {
   /* ---------- Active nav link ---------- */
   const navLinks = $$(".nav__link");
   const sectionIds = navLinks.map((a) => a.getAttribute("href").slice(1));
-  // The portfolio section sits between Skills and Journey; keep "Skills" lit there.
-  const sectionFor = { work: "skills" };
+  // The Kit and portfolio sections sit between Skills and Journey; keep "Skills" lit there.
+  const sectionFor = { kit: "skills", work: "skills" };
   const setActive = (id) => {
     const target = sectionFor[id] || id;
     navLinks.forEach((a) => {
@@ -171,7 +171,7 @@ const CONFIG = {
     (entries) => entries.forEach((entry) => entry.isIntersecting && setActive(entry.target.id)),
     { rootMargin: "-45% 0px -50% 0px" }
   );
-  [...sectionIds, "work"].forEach((id) => { const s = document.getElementById(id); if (s) spy.observe(s); });
+  [...sectionIds, "kit", "work"].forEach((id) => { const s = document.getElementById(id); if (s) spy.observe(s); });
 
   /* ---------- Scroll reveal ---------- */
   const revealEls = $$(".reveal");

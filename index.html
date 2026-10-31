@@ -34,6 +34,7 @@
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/my-kit.css">
 
   <!-- Enables JS-only animation states; content stays visible without JS -->
   <script>document.documentElement.classList.add('js');</script>
@@ -312,19 +313,226 @@
             </div>
           </li>
         </ol>
+      </div>
+    </section>
 
-        <!-- Toolkit (from the "My Toolkit" page) -->
-        <div class="toolkit reveal">
-          <p class="toolkit__label">In my kit</p>
-          <ul class="toolkit__list">
-            <li>Sony A7III Full-Frame</li>
-            <li>Sony 90mm Macro</li>
-            <li>Godox Ring Flash</li>
-            <li>Godox Twin Flash + Diffuser</li>
-            <li>Univet 3.5× Loupes</li>
-          </ul>
+    <!-- ============ 03 — MY KIT (the creative backpack) ============ -->
+    <!-- Equipment cards are generated from the kitItems array at the top of js/my-kit.js -->
+    <section class="section kit" id="kit" aria-labelledby="kit-title">
+      <div class="container">
+        <header class="kit__head">
+          <p class="section-label reveal"><span>03</span> / The toolkit</p>
+          <h2 class="kit__title reveal" id="kit-title">My <em>Kit</em></h2>
+          <p class="kit__subtitle reveal">Every creative has a toolkit. Here’s mine.</p>
+        </header>
+
+        <div class="kit__stage" id="kitStage" data-state="closed">
+          <div class="kit__center">
+            <div class="kit-bag" id="kitBag" role="button" tabindex="0" aria-expanded="false" aria-controls="kitCards" aria-label="Open my kit and explore the tools I work with">
+              <div class="kit-bag__spot" aria-hidden="true"></div>
+              <div class="kit-bag__shadow" aria-hidden="true"></div>
+
+              <div class="kit-bag__float">
+                <!-- Layer 1: body, straps, interior, zipper track -->
+                <svg class="kit-bag__layer" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+                  <defs>
+                    <linearGradient id="kbBody" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#2c2c2c"/><stop offset=".45" stop-color="#161616"/><stop offset="1" stop-color="#080808"/>
+                    </linearGradient>
+                    <linearGradient id="kbShell" x1=".1" y1="0" x2=".9" y2="1">
+                      <stop offset="0" stop-color="#343434"/><stop offset=".5" stop-color="#191919"/><stop offset="1" stop-color="#0b0b0b"/>
+                    </linearGradient>
+                    <linearGradient id="kbStrap" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="#1d1d1d"/><stop offset="1" stop-color="#0b0b0b"/>
+                    </linearGradient>
+                    <linearGradient id="kbRim" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="kbMetal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#f4f4f4"/><stop offset=".45" stop-color="#a9a9a9"/><stop offset=".55" stop-color="#7d7d7d"/><stop offset="1" stop-color="#d6d6d6"/>
+                    </linearGradient>
+                    <radialGradient id="kbInnerGlow" cx=".5" cy=".62" r=".6">
+                      <stop offset="0" stop-color="#c6ff34" stop-opacity=".95"/><stop offset=".45" stop-color="#c6ff34" stop-opacity=".28"/><stop offset="1" stop-color="#c6ff34" stop-opacity="0"/>
+                    </radialGradient>
+                    <pattern id="kbRipstop" width="9" height="9" patternUnits="userSpaceOnUse">
+                      <path d="M0 0H9M0 0V9" stroke="#fff" stroke-opacity=".04" stroke-width="1"/>
+                    </pattern>
+                    <pattern id="kbMesh" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                      <path d="M0 0H5M0 0V5" stroke="#fff" stroke-opacity=".09" stroke-width=".8"/>
+                    </pattern>
+                    <pattern id="kbLimeRipstop" width="12" height="12" patternUnits="userSpaceOnUse">
+                      <path d="M0 0H12M0 0V12" stroke="#c6ff34" stroke-opacity=".08" stroke-width="1"/>
+                    </pattern>
+                    <filter id="kbGrain" x="0" y="0" width="100%" height="100%">
+                      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/>
+                      <feColorMatrix type="saturate" values="0"/>
+                      <feComponentTransfer><feFuncA type="table" tableValues="0 .09"/></feComponentTransfer>
+                    </filter>
+                    <filter id="kbBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+                    <clipPath id="kbBodyClip"><path d="M80,140 C80,90 120,60 200,60 C280,60 320,90 320,140 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z"/></clipPath>
+                    <clipPath id="kbHatchClip"><path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z"/></clipPath>
+                  </defs>
+
+                  <!-- shoulder straps peeking out behind the body -->
+                  <path d="M76,118 C52,180 50,330 63,472 L82,472 C71,330 73,190 94,122 Z" fill="url(#kbStrap)"/>
+                  <path d="M324,118 C348,180 350,330 337,472 L318,472 C329,330 327,190 306,122 Z" fill="url(#kbStrap)"/>
+
+                  <!-- top carry handle -->
+                  <path d="M166,70 C166,24 234,24 234,70" fill="none" stroke="#1a1a1a" stroke-width="12" stroke-linecap="round"/>
+                  <path d="M170,66 C171,32 229,32 230,66" fill="none" stroke="#fff" stroke-opacity=".1" stroke-width="1.5"/>
+                  <rect x="158" y="60" width="16" height="16" rx="4" fill="#202020"/>
+                  <rect x="226" y="60" width="16" height="16" rx="4" fill="#202020"/>
+
+                  <!-- body -->
+                  <path d="M80,140 C80,90 120,60 200,60 C280,60 320,90 320,140 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z" fill="url(#kbBody)"/>
+                  <path d="M80,140 C80,90 120,60 200,60 C280,60 320,90 320,140 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z" fill="url(#kbRipstop)"/>
+                  <rect width="400" height="520" clip-path="url(#kbBodyClip)" filter="url(#kbGrain)"/>
+                  <path d="M80,140 C80,90 120,60 200,60 C280,60 320,90 320,140 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z" fill="none" stroke="url(#kbRim)" stroke-width="1.6"/>
+                  <!-- body stitching -->
+                  <path d="M80,140 C80,90 120,60 200,60 C280,60 320,90 320,140 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z" transform="translate(200 275) scale(.955) translate(-200 -275)" fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="1" stroke-dasharray="4 4"/>
+
+                  <!-- top pocket zipper -->
+                  <path d="M148,86 C174,79 226,79 252,86" fill="none" stroke="#0e0e0e" stroke-width="7" stroke-linecap="round"/>
+                  <path d="M148,86 C174,79 226,79 252,86" fill="none" stroke="#5c5c5c" stroke-width="3.5" stroke-dasharray="1.4 1.8"/>
+                  <rect x="236" y="79" width="10" height="7" rx="2" fill="url(#kbMetal)"/>
+                  <rect x="239" y="85" width="4" height="10" rx="2" fill="url(#kbMetal)"/>
+
+                  <!-- rubberised base -->
+                  <path d="M71,434 L329,434 L330,440 C332,470 312,490 282,490 L118,490 C88,490 68,470 70,440 Z" fill="#0a0a0a"/>
+                  <path d="M76,441 H324" stroke="#fff" stroke-opacity=".12" stroke-dasharray="4 4"/>
+                  <rect x="110" y="486" width="34" height="8" rx="4" fill="#040404"/>
+                  <rect x="256" y="486" width="34" height="8" rx="4" fill="#040404"/>
+
+                  <!-- side mesh pockets with lime elastic -->
+                  <path d="M71,300 C60,330 60,408 70,432 L86,432 L87,300 Z" fill="#111"/>
+                  <path d="M71,300 C60,330 60,408 70,432 L86,432 L87,300 Z" fill="url(#kbMesh)"/>
+                  <path d="M71,301 L87,301" class="kb-lime-stroke" stroke-width="1.6"/>
+                  <path d="M329,300 C340,330 340,408 330,432 L314,432 L313,300 Z" fill="#111"/>
+                  <path d="M329,300 C340,330 340,408 330,432 L314,432 L313,300 Z" fill="url(#kbMesh)"/>
+                  <path d="M329,301 L313,301" class="kb-lime-stroke" stroke-width="1.6"/>
+
+                  <!-- compression buckles -->
+                  <rect x="70" y="236" width="18" height="10" rx="2" fill="#1c1c1c" stroke="#333" stroke-width=".8"/>
+                  <rect x="312" y="236" width="18" height="10" rx="2" fill="#1c1c1c" stroke="#333" stroke-width=".8"/>
+
+                  <!-- INTERIOR (revealed when the hatch opens) -->
+                  <g class="kb-interior">
+                    <path d="M100,152 C100,112 138,96 200,96 C262,96 300,112 300,152 L308,432 C309,456 292,467 272,467 L128,467 C108,467 91,456 92,432 Z" fill="#030303"/>
+                    <ellipse class="kb-glow" cx="200" cy="330" rx="118" ry="150" fill="url(#kbInnerGlow)"/>
+                    <!-- padded camera-bag dividers -->
+                    <rect x="114" y="128" width="172" height="100" rx="16" fill="#0f0f0f" fill-opacity=".93" stroke="#232323"/>
+                    <rect x="114" y="238" width="82" height="204" rx="16" fill="#0f0f0f" fill-opacity=".93" stroke="#232323"/>
+                    <rect x="204" y="238" width="82" height="204" rx="16" fill="#0f0f0f" fill-opacity=".93" stroke="#232323"/>
+                    <!-- gear tucked inside -->
+                    <rect x="152" y="150" width="96" height="58" rx="9" fill="#0a0a0a" stroke="#2a2a2a"/>
+                    <circle cx="200" cy="179" r="21" fill="#060606" stroke="#303030"/>
+                    <circle class="kb-lime-stroke" cx="200" cy="179" r="11" stroke-opacity=".6" stroke-width="1.2"/>
+                    <rect x="130" y="262" width="50" height="128" rx="11" fill="#0a0a0a" stroke="#2a2a2a"/>
+                    <path d="M130,290 H180 M130,300 H180 M130,352 H180" stroke="#262626"/>
+                    <circle class="kb-lime-stroke" cx="155" cy="276" r="7" stroke-opacity=".45"/>
+                    <rect x="222" y="270" width="46" height="62" rx="6" fill="#0a0a0a" stroke="#2a2a2a"/>
+                    <rect x="229" y="338" width="32" height="62" rx="5" fill="#0a0a0a" stroke="#2a2a2a"/>
+                    <rect class="kb-lime-fill" x="230" y="279" width="30" height="5" rx="2" fill-opacity=".55"/>
+                  </g>
+
+                  <!-- hinge seam across the top of the hatch -->
+                  <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150" fill="none" stroke="#050505" stroke-width="7" stroke-linecap="round"/>
+
+                  <!-- main zipper: tape, teeth, light leaking through the opened part -->
+                  <path d="M101,152 L93,430 C92,456 108,466 128,466 L272,466 C292,466 308,456 307,430 L299,152" fill="none" stroke="#0c0c0c" stroke-width="13" stroke-linecap="round"/>
+                  <path d="M101,152 L93,430 C92,456 108,466 128,466 L272,466 C292,466 308,456 307,430 L299,152" fill="none" stroke="#6e6e6e" stroke-width="6" stroke-dasharray="1.6 1.9"/>
+                  <path class="kb-zipglow kb-zipglow--soft" d="M101,152 L93,430 C92,456 108,466 128,466 L272,466 C292,466 308,456 307,430 L299,152" fill="none" stroke-width="9" filter="url(#kbBlur)"/>
+                  <path class="kb-zipglow" id="kbZipPath" d="M101,152 L93,430 C92,456 108,466 128,466 L272,466 C292,466 308,456 307,430 L299,152" fill="none" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+
+                <!-- Layer 2: the hard-shell front hatch (hinged at the top, opens like a lid) -->
+                <div class="kit-bag__hatch">
+                  <div class="kit-bag__face kit-bag__face--front">
+                    <svg class="kit-bag__layer" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+                      <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z" fill="url(#kbShell)"/>
+                      <g clip-path="url(#kbHatchClip)">
+                        <!-- faceted hard shell, lit from the top-left -->
+                        <path d="M96,332 L200,292 L200,100 L104,146 Z" fill="#fff" fill-opacity=".05"/>
+                        <path d="M304,332 L200,292 L200,100 L296,146 Z" fill="#000" fill-opacity=".2"/>
+                        <path d="M96,332 L200,292 L200,462 L96,462 Z" fill="#fff" fill-opacity=".018"/>
+                        <path d="M304,332 L200,292 L200,462 L304,462 Z" fill="#000" fill-opacity=".32"/>
+                        <path d="M200,104 V292 M200,292 L96,332 M200,292 L304,332" stroke="#fff" stroke-opacity=".1" stroke-width="1"/>
+                        <rect width="400" height="520" filter="url(#kbGrain)" opacity=".6"/>
+                      </g>
+                      <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z" fill="none" stroke="url(#kbRim)" stroke-width="1.5"/>
+                      <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z" transform="translate(200 281) scale(.93) translate(-200 -281)" fill="none" stroke="#fff" stroke-opacity=".12" stroke-dasharray="3.5 3.5"/>
+                      <!-- glowing light slot -->
+                      <rect x="195.5" y="186" width="9" height="148" rx="4.5" fill="#050505" stroke="#2a2a2a"/>
+                      <rect class="kb-slit kb-slit--glow" x="196" y="192" width="8" height="136" rx="4" filter="url(#kbBlur)"/>
+                      <rect class="kb-slit" x="198.5" y="194" width="3" height="132" rx="1.5"/>
+                      <!-- metal badge -->
+                      <rect x="168" y="406" width="64" height="17" rx="3.5" fill="url(#kbMetal)"/>
+                      <text x="200" y="417.6" text-anchor="middle" font-family="Sora, sans-serif" font-size="6" font-weight="700" letter-spacing="1.6" fill="#141414">DR·CREATIVE</text>
+                    </svg>
+                  </div>
+                  <div class="kit-bag__face kit-bag__face--back">
+                    <svg class="kit-bag__layer" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+                      <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z" fill="#0c0c0c"/>
+                      <path d="M108,150 C108,118 140,104 200,104 C260,104 292,118 292,150 L300,430 C301,448 290,458 272,458 L128,458 C110,458 99,448 100,430 Z" fill="url(#kbLimeRipstop)"/>
+                      <rect x="124" y="168" width="152" height="176" rx="14" fill="#141414" stroke="#2b2b2b"/>
+                      <rect x="124" y="168" width="152" height="176" rx="14" fill="url(#kbMesh)"/>
+                      <path class="kb-lime-stroke" d="M136,182 H264" stroke-width="1.6" stroke-opacity=".7"/>
+                      <rect class="kb-lime-fill" x="164" y="380" width="72" height="20" rx="3"/>
+                      <text x="200" y="393.6" text-anchor="middle" font-family="Sora, sans-serif" font-size="8.5" font-weight="800" letter-spacing="2.4" fill="#050505">MY KIT</text>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- inner light spilling out when opened -->
+                <div class="kit-bag__light" aria-hidden="true"></div>
+
+                <!-- Layer 3: zipper slider (moved along the zipper path by JS) -->
+                <svg class="kit-bag__layer kit-bag__slider-layer" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+                  <g id="kbSlider" transform="translate(101 152) rotate(92)">
+                    <circle class="kb-pulse" r="11"/>
+                    <rect x="-8" y="-6" width="16" height="12" rx="3" fill="url(#kbMetal)" stroke="#1a1a1a" stroke-width=".6"/>
+                    <rect x="-2.6" y="3" width="5.2" height="17" rx="2.6" fill="url(#kbMetal)" stroke="#1a1a1a" stroke-width=".5"/>
+                    <circle cy="16.5" r="1.4" fill="#111"/>
+                    <path class="kb-lime-stroke" d="M0,19 q-4.5,8 0,15 q4.5,-7 0,-15" stroke-width="1.5"/>
+                  </g>
+                </svg>
+              </div>
+
+              <p class="kit-bag__hint" aria-hidden="true"><span class="kit-bag__dot"></span>Click to explore</p>
+            </div>
+
+            <button class="kit__close" id="kitClose" type="button" tabindex="-1">
+              <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg> Close the kit
+            </button>
+          </div>
+
+          <ul class="kit__cards" id="kitCards" aria-label="Equipment in my kit" hidden></ul>
         </div>
       </div>
+
+      <!-- Equipment detail view -->
+      <dialog class="kit-modal" id="kitModal" aria-labelledby="kitModalName">
+        <button class="kit-modal__close" type="button" id="kitModalClose" aria-label="Close details">
+          <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+        <div class="kit-modal__grid">
+          <figure class="kit-modal__media">
+            <div class="kit-modal__plate"><img id="kitModalImg" src="data:," alt=""></div>
+            <div class="kit-modal__thumbs" id="kitModalThumbs"></div>
+          </figure>
+          <div class="kit-modal__body">
+            <p class="kit-modal__meta"><span id="kitModalNum"></span><span id="kitModalCat"></span></p>
+            <h3 class="kit-modal__name" id="kitModalName"></h3>
+            <dl class="kit-modal__specs" id="kitModalSpecs"></dl>
+            <p class="kit-modal__desc" id="kitModalDesc"></p>
+            <div class="kit-modal__nav">
+              <button type="button" id="kitPrev" aria-label="Previous item"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              <span id="kitModalCount"></span>
+              <button type="button" id="kitNext" aria-label="Next item"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </section>
 
     <!-- ============ 04 — EXTERNAL PORTFOLIO ============ -->
@@ -333,7 +541,7 @@
       <div class="work__bg" aria-hidden="true">WORK</div>
       <div class="container work__grid">
         <div class="work__intro">
-          <p class="section-label reveal"><span>03</span> / Selected work</p>
+          <p class="section-label reveal"><span>04</span> / Selected work</p>
           <h2 class="section-title work__title reveal" id="work-title">Want to See What <em>I Create?</em></h2>
           <p class="work__desc reveal">A collection of my work, creative projects, professional experiences, and visual experiments — all in one place.</p>
 
@@ -381,7 +589,7 @@
     <section class="section journey" id="journey" aria-labelledby="journey-title">
       <div class="container">
         <header class="section-head">
-          <p class="section-label reveal"><span>04</span> / The journey</p>
+          <p class="section-label reveal"><span>05</span> / The journey</p>
           <h2 class="section-title reveal" id="journey-title">Always Learning. <em>Always Creating.</em></h2>
         </header>
 
@@ -471,7 +679,7 @@
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <div class="container contact__grid">
         <div class="contact__intro">
-          <p class="section-label reveal"><span>05</span> / Let’s connect</p>
+          <p class="section-label reveal"><span>06</span> / Let’s connect</p>
           <h2 class="section-title reveal" id="contact-title">Have an Idea? <em>Let’s Create Something.</em></h2>
           <p class="contact__desc reveal">Whether it’s a creative collaboration, a professional opportunity, or an interesting conversation, I’d love to hear from you.</p>
 
@@ -557,5 +765,6 @@
   </dialog>
 
   <script src="js/main.js" defer></script>
+  <script src="js/my-kit.js" defer></script>
 </body>
 </html>

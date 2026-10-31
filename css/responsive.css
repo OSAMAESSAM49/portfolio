@@ -208,11 +208,6 @@
   .skill__title { font-size: clamp(1.6rem, 8vw, 2.1rem); }
   .tags li { font-size: 0.74rem; padding: 5px 11px; }
 
-  .toolkit { margin-top: 44px; flex-direction: column; gap: 14px; }
-  .toolkit__list { flex-direction: column; gap: 10px; }
-  .toolkit__list li + li::before { display: none; }
-  .toolkit__list li { padding-left: 18px; position: relative; }
-  .toolkit__list li::after { content: ""; position: absolute; left: 0; top: 50%; width: 8px; height: 1.5px; background: var(--lime); }
 
   .work__bg { font-size: 46vw; top: 18%; }
   .work__title { font-size: clamp(2.5rem, 12vw, 3.4rem); margin-bottom: 22px; }

@@ -670,24 +670,6 @@ body::after {
   .skill:hover .tags li { border-color: rgba(198, 255, 52, 0.4); }
 }
 
-.toolkit {
-  margin-top: 64px;
-  display: flex;
-  align-items: baseline;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-.toolkit__label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--lime);
-}
-.toolkit__list { display: flex; flex-wrap: wrap; gap: 6px 0; }
-.toolkit__list li { font-family: var(--font-display); font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); }
-.toolkit__list li + li::before { content: "/"; color: var(--dim); margin: 0 16px; }
-
 /* ---------- Work (external portfolio) ---------- */
 .work {
   overflow: hidden;
