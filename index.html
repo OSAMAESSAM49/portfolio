@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/my-kit.css">
+  <link rel="stylesheet" href="css/journey.css">
 
   <!-- Enables JS-only animation states; content stays visible without JS -->
   <script>document.documentElement.classList.add('js');</script>
@@ -71,6 +72,10 @@
       <symbol id="i-arrow-up-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></symbol>
       <symbol id="i-arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
       <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22V3M5 4h13l-2.5 4.5L18 13H5"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path class="lock-shackle" d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
       <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
       <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
     </defs>
@@ -584,93 +589,201 @@
       </div>
     </section>
 
-    <!-- ============ 05 — JOURNEY ============ -->
-    <!-- Dates come from the portfolio PDF (Experience + Dental Education pages). Edit freely. -->
+    <!-- ============ 05 — JOURNEY: the road ============ -->
+    <!-- Each <li class="station"> is a stop on the road. Dates come from the portfolio PDF.
+         data-type sets the icon/colour: milestone · practice · training · creative · stage.
+         The road, traveler light and unlock animations are drawn by js/journey.js. -->
     <section class="section journey" id="journey" aria-labelledby="journey-title">
+      <div class="journey__fog" aria-hidden="true"></div>
       <div class="container">
-        <header class="section-head">
+        <header class="journey__head">
           <p class="section-label reveal"><span>05</span> / The journey</p>
           <h2 class="section-title reveal" id="journey-title">Always Learning. <em>Always Creating.</em></h2>
+          <p class="journey__intro reveal">A road, not a résumé. Every station stays locked until you reach it — keep scrolling to drive.</p>
+          <ul class="journey__legend reveal" aria-label="Station types">
+            <li data-type="milestone"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Milestone</li>
+            <li data-type="practice"><svg class="icon" aria-hidden="true"><use href="#i-tooth"/></svg>Practice</li>
+            <li data-type="training"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Training</li>
+            <li data-type="creative"><svg class="icon" aria-hidden="true"><use href="#i-pen"/></svg>Creative</li>
+            <li data-type="stage"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>Stage</li>
+          </ul>
         </header>
 
-        <div class="journey__grid">
-          <ol class="timeline">
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2013</span>
-              <div class="timeline__body">
-                <h3>Design comes first</h3>
-                <p>Graphic design and visual communication — the first creative discipline, and still a daily practice.</p>
-              </div>
+        <div class="road" id="road">
+          <!-- HUD that rides along at the bottom of the screen -->
+          <div class="road__hud" aria-hidden="true">
+            <div class="road__hud-inner">
+              <span class="road__hud-label">Now passing</span>
+              <span class="road__hud-year" id="roadHudYear">Start</span>
+              <span class="road__hud-bar"><i id="roadHudBar"></i></span>
+              <span class="road__hud-count" id="roadHudCount">00 / 09</span>
+            </div>
+          </div>
+
+          <p class="road__start" aria-hidden="true"><span>Start</span></p>
+
+          <ol class="stations">
+            <li class="station" data-type="creative">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-pen"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 01</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-pen"/></svg>Creative</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2013</p>
+                <h3 class="station__title">Design comes first</h3>
+                <p class="station__text">Graphic design and visual communication — the first creative discipline, and still a daily practice.</p>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2017</span>
-              <div class="timeline__body">
-                <h3>Dentistry &amp; clinical practice</h3>
-                <p>Graduated from Mansoura University and began clinical practice — today as owner of Gannah Dental Clinic.</p>
-              </div>
+
+            <li class="station" data-type="milestone">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-flag"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 02</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Milestone</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2017</p>
+                <h3 class="station__title">Graduation &amp; the clinic</h3>
+                <p class="station__text">Graduated in dentistry and began clinical practice.</p>
+                <ul class="station__stops">
+                  <li><b>Bachelor’s Degree in Dentistry</b><span>Mansoura University</span></li>
+                </ul>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2021</span>
-              <div class="timeline__body">
-                <h3>Esthetic &amp; restorative depth</h3>
-                <p>Orthodontic program and a fixed esthetic program, sharpening the esthetic side of dentistry.</p>
-              </div>
+
+            <li class="station" data-type="training">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 03</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Training</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2021</p>
+                <h3 class="station__title">Esthetic &amp; restorative depth</h3>
+                <p class="station__text">Sharpening the esthetic side of dentistry.</p>
+                <ul class="station__stops">
+                  <li><b>Orthodontic Program</b><span>Dr. Amr Askr</span></li>
+                  <li><b>Fixed Esthetic Program</b><span>MDS</span></li>
+                </ul>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2023</span>
-              <div class="timeline__body">
-                <h3>Picking up the camera</h3>
-                <p>Videography and storytelling — reels for my own clinic and for other dental centers, alongside dental photography and editing.</p>
-              </div>
+
+            <li class="station" data-type="creative">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-video"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 04</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-pen"/></svg>Creative</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2023</p>
+                <h3 class="station__title">Picking up the camera</h3>
+                <p class="station__text">Videography and storytelling — reels for my own clinic and for other dental centers, alongside dental photography and editing.</p>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2024</span>
-              <div class="timeline__body">
-                <h3>Advancing clinical skills</h3>
-                <p>Fixed prosthodontics, a basic implantology module and a direct restorations course.</p>
-              </div>
+
+            <li class="station" data-type="training">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 05</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Training</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2024</p>
+                <h3 class="station__title">Advancing clinical skills</h3>
+                <ul class="station__stops">
+                  <li><b>Fixed Prosthodontic Program</b><span>Dr. Mostafa Taha</span></li>
+                  <li><b>Implantology — Basic Module</b><span>Dr. Mostafa Taha</span></li>
+                  <li><b>Direct Course</b><span>Dr. Khashaba</span></li>
+                </ul>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2025</span>
-              <div class="timeline__body">
-                <h3>Composite artistry</h3>
-                <p>Anterior and posterior composite training with Renatto Voss, plus pricing in dentistry.</p>
-              </div>
+
+            <li class="station" data-type="training">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 06</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Training</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2025</p>
+                <h3 class="station__title">Composite artistry</h3>
+                <ul class="station__stops">
+                  <li><b>Anterior Composite</b><span>Renatto Voss</span></li>
+                  <li><b>Posterior Composite</b><span>Renatto Voss</span></li>
+                  <li><b>Pricing in Dentistry</b><span>Dr. Mostafa Taha</span></li>
+                </ul>
+              </article>
             </li>
-            <li class="timeline__item reveal">
-              <span class="timeline__year">2026</span>
-              <div class="timeline__body">
-                <h3>On stage &amp; in new spaces</h3>
-                <p>Speaker at MEDC 2026 on paradental skills, and dentistry at Rovan Dental Clinic.</p>
-              </div>
+
+            <li class="station" data-type="stage">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-mic"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 07</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>Stage</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">2026</p>
+                <h3 class="station__title">On stage &amp; in new spaces</h3>
+                <ul class="station__stops">
+                  <li><b>Speaker — MEDC 2026</b><span>On paradental skills</span></li>
+                  <li><b>Rovan Dental Clinic</b><span>Dentistry</span></li>
+                </ul>
+              </article>
             </li>
-            <li class="timeline__item timeline__item--now reveal">
-              <span class="timeline__year">Now</span>
-              <div class="timeline__body">
-                <h3>AI &amp; digital creativity</h3>
-                <p>AI-powered image and video production, digital smile design and digital workflows — where dentistry and technology meet.</p>
-              </div>
+
+            <li class="station" data-type="practice">
+              <span class="station__pin" aria-hidden="true"><svg class="icon"><use href="#i-tooth"/></svg></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 08</span>
+                  <span class="station__type"><svg class="icon" aria-hidden="true"><use href="#i-tooth"/></svg>Practice</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">Now</p>
+                <h3 class="station__title">Where dentistry meets AI</h3>
+                <p class="station__text">Running my own practice while producing with AI — where dentistry, design and technology meet.</p>
+                <ul class="station__stops">
+                  <li><b>Owner</b><span>Gannah Dental Clinic</span></li>
+                  <li><b>AI image &amp; video production</b><span>Creative</span></li>
+                  <li><b>Digital smile design &amp; workflows</b><span>Digital dentistry</span></li>
+                </ul>
+              </article>
+            </li>
+
+            <!-- The mystery stop at the end of the road -->
+            <li class="station station--next" data-type="next">
+              <span class="station__pin" aria-hidden="true"><b>?</b></span>
+              <article class="station__card">
+                <header class="station__meta">
+                  <span class="station__no">Station 09</span>
+                  <span class="station__type">Next destination</span>
+                  <span class="station__lock" aria-hidden="true"><svg class="icon"><use href="#i-lock"/></svg><b>Locked</b></span>
+                </header>
+                <p class="station__year">20??</p>
+                <h3 class="station__title">The next station is unwritten</h3>
+                <p class="station__text">The road keeps going. The next stop could be a collaboration with you.</p>
+                <a class="station__cta" href="#contact">Plan the next stop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+              </article>
             </li>
           </ol>
+        </div>
 
-          <!-- Education & training (from "Dental Education" page) -->
-          <aside class="education reveal" aria-labelledby="edu-title">
-            <h3 class="education__title" id="edu-title">Education &amp; Training</h3>
-            <ul class="education__list">
-              <li><span>Bachelor’s Degree in Dentistry</span><small>Mansoura University</small><b>2017</b></li>
-              <li><span>Orthodontic Program</span><small>Dr. Amr Askr</small><b>2021</b></li>
-              <li><span>Fixed Esthetic Program</span><small>MDS</small><b>2021</b></li>
-              <li><span>Basic &amp; Advanced Endodontics</span><small>MDS</small><b></b></li>
-              <li><span>Fixed Prosthodontic Program</span><small>Dr. Mostafa Taha</small><b>2024</b></li>
-              <li><span>Implantology — Basic Module</span><small>Dr. Mostafa Taha</small><b>2024</b></li>
-              <li><span>Direct Course</span><small>Dr. Khashaba</small><b>2024</b></li>
-              <li><span>Pricing in Dentistry</span><small>Dr. Mostafa Taha</small><b>2025</b></li>
-              <li><span>Anterior Composite</span><small>Renatto Voss</small><b>2025</b></li>
-              <li><span>Posterior Composite</span><small>Renatto Voss</small><b>2025</b></li>
-              <li><span>FMR</span><small>Dr. Mostafa Taha</small><b></b></li>
-            </ul>
-            <p class="education__note">Besides attending many dental events and conferences.</p>
-          </aside>
+        <!-- Undated training from the PDF -->
+        <div class="logbook reveal">
+          <p class="logbook__label">Also logged along the way</p>
+          <ul class="logbook__list">
+            <li><b>Basic &amp; Advanced Endodontics</b><span>MDS</span></li>
+            <li><b>FMR</b><span>Dr. Mostafa Taha</span></li>
+            <li><b>Dental events &amp; conferences</b><span>Ongoing</span></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -766,5 +879,6 @@
 
   <script src="js/main.js" defer></script>
   <script src="js/my-kit.js" defer></script>
+  <script src="js/journey.js" defer></script>
 </body>
 </html>

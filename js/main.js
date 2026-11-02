@@ -196,20 +196,6 @@ const CONFIG = {
     revealEls.forEach((el) => el.classList.add("is-visible"));
   }
 
-  /* ---------- Timeline progress line ---------- */
-  const timeline = $(".timeline");
-  if (timeline) {
-    let ticking = false;
-    const update = () => {
-      const r = timeline.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const progress = Math.min(1, Math.max(0, (vh * 0.6 - r.top) / r.height));
-      timeline.style.setProperty("--progress", progress.toFixed(3));
-      ticking = false;
-    };
-    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    update();
-  }
 
   /* ---------- Subtle magnetic pull on primary buttons (desktop only) ---------- */
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion.matches) {

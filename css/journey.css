@@ -1,0 +1,444 @@
+/* =========================================================
+   journey.css — "The Journey": a night road with locked stations
+   js/journey.js draws the road (SVG), moves the traveler light with
+   scroll and adds .is-reached to each station as it is passed.
+   ========================================================= */
+
+.journey {
+  position: relative;
+  overflow: hidden;
+  overflow: clip; /* clips like hidden, but keeps the sticky HUD working */
+  border-top: 1px solid var(--line);
+  background:
+    radial-gradient(60% 40% at 50% 0%, rgba(198, 255, 52, 0.05), rgba(198, 255, 52, 0) 70%),
+    var(--bg);
+  padding-bottom: clamp(80px, 9vw, 130px);
+}
+
+/* drifting fog for atmosphere */
+.journey__fog {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(40% 18% at 20% 30%, rgba(255, 255, 255, 0.035), transparent 70%),
+    radial-gradient(35% 14% at 80% 55%, rgba(255, 255, 255, 0.03), transparent 70%),
+    radial-gradient(45% 20% at 40% 82%, rgba(198, 255, 52, 0.025), transparent 70%);
+  animation: journey-fog 26s ease-in-out infinite alternate;
+}
+@keyframes journey-fog {
+  from { transform: translateX(-4%); }
+  to { transform: translateX(4%); }
+}
+
+/* ---------- Header ---------- */
+.journey__head { position: relative; z-index: 2; text-align: center; display: grid; justify-items: center; max-width: 900px; margin: 0 auto; }
+.journey__head .section-label { justify-content: center; }
+.journey__intro { margin-top: 22px; max-width: 560px; color: var(--muted); font-size: 1.05rem; }
+.journey__legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 28px; }
+.journey__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+.journey__legend .icon { font-size: 15px; color: var(--lime); }
+
+/* ---------- Road container ---------- */
+.road {
+  --pin: 48px;
+  position: relative;
+  margin-top: clamp(56px, 7vw, 96px);
+  padding-bottom: 190px; /* the road fades into the unknown below the last stop */
+}
+.road__svg { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+
+/* fog that hides the road ahead of the traveler */
+.road__ahead {
+  position: absolute;
+  left: -20vw;
+  right: -20vw;
+  top: 0;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0) 0, rgba(5, 5, 5, 0.72) 220px, rgba(5, 5, 5, 0.86) 520px, rgba(5, 5, 5, 0.9) 100%);
+  will-change: transform;
+}
+.road__ahead::before {
+  content: "";
+  position: absolute;
+  inset: 60px 0 auto;
+  height: 260px;
+  background:
+    radial-gradient(30% 50% at 30% 50%, rgba(255, 255, 255, 0.05), transparent 70%),
+    radial-gradient(25% 45% at 70% 40%, rgba(255, 255, 255, 0.04), transparent 70%);
+  filter: blur(8px);
+  animation: journey-fog 14s ease-in-out infinite alternate-reverse;
+}
+
+/* SVG parts */
+.road__edge { stroke: #1a1a1a; }
+.road__asphalt { stroke: #0b0b0b; }
+.road__dash { stroke: rgba(255, 255, 255, 0.13); }
+.road__lit-edge { stroke: var(--lime); opacity: 0.5; }
+.road__lit-asphalt { stroke: #10130a; }
+.road__lit-glow { stroke: var(--lime); opacity: 0.07; }
+.road__dash-lit { stroke: var(--lime); animation: road-lanes 1.2s linear infinite; }
+@keyframes road-lanes { to { stroke-dashoffset: -60; } }
+.road__traveler { transition: opacity 0.6s; }
+.road__core { fill: var(--lime); }
+.road__spark { fill: #fff; }
+.road__halo { fill: none; stroke: var(--lime); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: road-halo 1.8s var(--ease-out) infinite; }
+@keyframes road-halo {
+  from { transform: scale(0.6); opacity: 0.9; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* start marker */
+.road__start {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 70px;
+}
+.road__start span {
+  padding: 8px 18px;
+  border: 1px dashed rgba(198, 255, 52, 0.6);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  padding-left: calc(18px + 0.4em);
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+/* ---------- HUD (sticks to the bottom of the screen while driving) ---------- */
+.road__hud {
+  position: sticky;
+  top: calc(100vh - 92px);
+  top: calc(100svh - 92px);
+  z-index: 6;
+  height: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.road__hud-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 52px;
+  padding: 0 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: rgba(8, 8, 8, 0.82);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  translate: 0 20px;
+  transition: opacity 0.5s var(--ease-out), translate 0.5s var(--ease-out);
+}
+.road.is-driving .road__hud-inner { opacity: 1; translate: 0 0; }
+.road__hud-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
+.road__hud-year { min-width: 3.4em; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--lime); }
+.road__hud-bar { position: relative; width: 120px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.road__hud-bar i { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); background: var(--lime); }
+.road__hud-count { font-family: var(--font-display); font-size: 0.78rem; color: var(--muted); }
+
+/* ---------- Stations ---------- */
+.stations { position: relative; z-index: 2; }
+
+.station {
+  --px: 41%;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: 12px 0;
+}
+.station + .station { margin-top: -36px; }
+.station:nth-child(even) { --px: 59%; }
+/* 82% of a half-width column = the space up to the road (pins sit at 41% / 59%), minus a gap */
+.station__card { grid-column: 1; justify-self: start; width: min(440px, calc(82% - 48px)); }
+.station:nth-child(even) .station__card { grid-column: 2; justify-self: end; }
+
+/* the stop marker on the road */
+.station__pin {
+  position: absolute;
+  left: var(--px);
+  top: 66px;
+  z-index: 3;
+  width: var(--pin);
+  height: var(--pin);
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #0b0b0b;
+  border: 1.5px solid rgba(255, 255, 255, 0.24);
+  color: #5a5a5a;
+  font-size: 19px;
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s, box-shadow 0.8s var(--ease-out), scale 0.6s var(--ease-out);
+}
+.station__pin b { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: var(--lime); }
+.station__pin::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--lime);
+  opacity: 0;
+}
+/* beacon of light shooting up when the stop is reached */
+.station__pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 2px;
+  height: 120px;
+  margin-left: -1px;
+  background: linear-gradient(0deg, rgba(198, 255, 52, 0.9), rgba(198, 255, 52, 0));
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: transform 1s var(--ease-out), opacity 1.6s ease 0.8s;
+}
+
+/* the card */
+.station__card {
+  position: relative;
+  padding: 26px 28px 28px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(24, 24, 24, 0.94), rgba(10, 10, 10, 0.94));
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.95);
+  overflow: hidden;
+  transition: opacity 0.9s var(--ease-out), transform 1.1s var(--ease-out), border-color 0.8s, filter 0.9s var(--ease-out);
+}
+/* scanner sweep that runs once on unlock */
+.station__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(100deg, transparent 30%, rgba(198, 255, 52, 0.22) 50%, transparent 70%);
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+/* signal static while locked */
+.station__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 3px);
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+
+.station__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.station__no { font-family: var(--font-display); color: var(--lime); }
+.station__type { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.station__type .icon { font-size: 13px; }
+.station__lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  color: var(--dim);
+  transition: color 0.5s, border-color 0.5s, background-color 0.5s;
+}
+.station__lock .icon { font-size: 12px; }
+.station.is-reached .station__lock { color: var(--ink); background: var(--lime); border-color: var(--lime); }
+
+.station__year {
+  margin-top: 18px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 4.4vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--lime);
+  transition: color 0.8s, -webkit-text-stroke-color 0.8s;
+}
+.station__title {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.station__text { margin-top: 10px; color: var(--muted); font-size: 0.98rem; line-height: 1.6; }
+.station__stops { margin-top: 16px; border-top: 1px solid var(--line); }
+.station__stops li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  column-gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.station__stops li::before {
+  content: "";
+  grid-row: span 2;
+  width: 7px;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--lime);
+}
+.station__stops b { font-weight: 600; font-size: 0.95rem; }
+.station__stops span { font-size: 0.84rem; color: var(--dim); }
+.station__text, .station__stops { transition: filter 0.9s var(--ease-out), opacity 0.9s; }
+.station__stops li { transition: opacity 0.6s var(--ease-out), translate 0.6s var(--ease-out); }
+
+.station__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--lime);
+}
+.station__cta .icon { transition: transform 0.4s var(--ease-out); }
+.station__cta:hover .icon { transform: translateX(5px); }
+
+/* glyph span used for the decode effect (real text lives in .sr-only next to it) */
+.glyphs { font-variant-ligatures: none; }
+
+/* ---------- Locked → reached (only when JS drives the road) ---------- */
+.road.is-live .station:not(.is-reached) .station__card { opacity: 0.42; transform: translateX(-26px); border-style: dashed; }
+.road.is-live .station:nth-child(even):not(.is-reached) .station__card { transform: translateX(26px); }
+.road.is-live .station:not(.is-reached) .station__card::after { opacity: 1; animation: station-static 0.25s steps(2) infinite; }
+.road.is-live .station:not(.is-reached) .station__year { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.35); }
+.road.is-live .station:not(.is-reached) .station__text,
+.road.is-live .station:not(.is-reached) .station__stops,
+.road.is-live .station:not(.is-reached) .station__cta { filter: blur(6px); opacity: 0.6; pointer-events: none; }
+.road.is-live .station:not(.is-reached) .station__stops li { opacity: 0; translate: 0 8px; }
+.road.is-live .station:not(.is-reached) .station__title { color: rgba(255, 255, 255, 0.55); }
+
+.station.is-reached .station__card { border-color: rgba(198, 255, 52, 0.26); }
+.station.is-reached .station__card::before { animation: station-scan 1.1s var(--ease-out) 0.1s; }
+.station.is-reached .station__pin {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--ink);
+  box-shadow: 0 0 0 7px rgba(198, 255, 52, 0.12), 0 0 46px rgba(198, 255, 52, 0.55);
+  animation: pin-pop 0.7s var(--ease-out);
+}
+.station.is-reached .station__pin::before { animation: pin-burst 1.1s var(--ease-out); }
+.station.is-reached .station__pin::after { transform: scaleY(1); opacity: 0.35; }
+.station.is-reached .station__pin b { color: var(--ink); }
+.station.is-reached .station__stops li:nth-child(1) { transition-delay: 0.35s; }
+.station.is-reached .station__stops li:nth-child(2) { transition-delay: 0.47s; }
+.station.is-reached .station__stops li:nth-child(3) { transition-delay: 0.59s; }
+
+@keyframes station-static {
+  from { background-position: 0 0; }
+  to { background-position: 0 3px; }
+}
+@keyframes station-scan {
+  from { transform: translateX(-130%); }
+  to { transform: translateX(130%); }
+}
+@keyframes pin-pop {
+  0% { scale: 1; }
+  40% { scale: 1.35; }
+  100% { scale: 1; }
+}
+@keyframes pin-burst {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(2.8); opacity: 0; }
+}
+
+/* the unknown final stop */
+.station--next .station__pin { border: 1.5px dashed var(--lime); background: rgba(198, 255, 52, 0.06); }
+.station--next .station__pin b { animation: next-flicker 2.6s steps(1) infinite; }
+.station--next .station__card { background: linear-gradient(160deg, rgba(198, 255, 52, 0.07), rgba(10, 10, 10, 0.95) 60%); }
+@keyframes next-flicker {
+  0%, 100% { opacity: 1; }
+  46% { opacity: 1; }
+  48% { opacity: 0.2; }
+  50% { opacity: 1; }
+  52% { opacity: 0.4; }
+  54% { opacity: 1; }
+}
+
+/* ---------- Logbook (undated training) ---------- */
+.logbook {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  margin-top: 20px;
+  padding-top: 28px;
+  border-top: 1px dashed var(--line-strong);
+}
+.logbook__label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase; color: var(--lime); }
+.logbook__list { display: flex; flex-wrap: wrap; gap: 10px 32px; }
+.logbook__list li { display: flex; gap: 10px; align-items: baseline; }
+.logbook__list b { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
+.logbook__list span { font-size: 0.85rem; color: var(--dim); }
+
+/* ---------- Tablet & mobile: road runs down the left edge ---------- */
+@media (max-width: 1023px) {
+  .road { --pin: 38px; padding-bottom: 150px; }
+  .road__start { justify-content: flex-start; margin-bottom: 40px; }
+  .road__start span { font-size: 0.62rem; padding: 6px 12px 6px calc(12px + 0.4em); }
+  .station { --px: 22px; grid-template-columns: minmax(0, 1fr); padding: 0 0 26px 58px; }
+  .station:nth-child(even) { --px: 30px; }
+  .station + .station { margin-top: 0; }
+  .station__card,
+  .station:nth-child(even) .station__card { grid-column: 1; justify-self: stretch; width: 100%; }
+  .station__pin { top: 50px; font-size: 16px; }
+  .station__pin::after { height: 70px; }
+  .road.is-live .station:not(.is-reached) .station__card,
+  .road.is-live .station:nth-child(even):not(.is-reached) .station__card { transform: translateX(18px); }
+}
+
+@media (max-width: 767px) {
+  .station { padding-left: 50px; }
+  .station__card { padding: 20px 18px 22px; border-radius: 16px; }
+  .station__meta { gap: 10px; font-size: 0.58rem; letter-spacing: 0.14em; }
+  .station__type .icon { display: none; }
+  .station__year { margin-top: 14px; font-size: 2.4rem; }
+  .road__hud-inner { gap: 10px; height: 46px; padding: 0 14px; }
+  .road__hud-label { display: none; }
+  .road__hud-bar { width: 70px; }
+  .logbook { flex-direction: column; gap: 14px; }
+  .logbook__list { flex-direction: column; gap: 10px; }
+}
+
+/* ---------- Reduced motion: everything unlocked, no driving ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .journey__fog, .road__ahead::before, .road__dash-lit, .road__halo, .station--next .station__pin b { animation: none !important; }
+}

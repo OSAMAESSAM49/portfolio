@@ -101,12 +101,10 @@
 
   .about__grid,
   .work__grid,
-  .journey__grid,
   .contact__grid { grid-template-columns: minmax(0, 1fr); }
 
   .about__media { max-width: 520px; }
   .work__grid { align-items: start; }
-  .education { position: static; }
 
   .skill { grid-template-columns: 56px minmax(0, 1fr); gap: 14px 20px; padding: 36px 0; }
   .skill__body { grid-column: 2; }
@@ -219,16 +217,6 @@
   .chapter:hover { padding-left: 0; }
   .partners { margin-top: 72px; padding: 24px 0 28px; }
 
-  /* Timeline: single rail on the left */
-  .timeline { padding-left: 0; }
-  .timeline::before, .timeline::after { left: 7px; }
-  .timeline__item { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 0 0 38px 40px; }
-  .timeline__item::before { left: -2px; top: 6px; }
-  .timeline__year { text-align: left; font-size: 1.5rem; }
-  .timeline__body h3 { padding-top: 0; }
-
-  .education { padding-top: 28px; }
-
   .contact__desc { margin-bottom: 36px; }
   .contact__links a { grid-template-columns: 22px minmax(0, 1fr) 18px; grid-template-areas: "icon key arrow" "icon val arrow"; gap: 2px 16px; padding: 16px 0; }
   .contact__links a > .icon:first-child { grid-area: icon; }
@@ -259,5 +247,4 @@
 /* Touch devices: no hover-only translations */
 @media (hover: none) {
   .btn--primary::before { display: none; }
-  .education__list li:hover { padding-left: 0; }
 }
